@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank - Mobile Banking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f1f5f9;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .app-header {
+            background: var(--primary);
+            color: white;
+            padding: 0 20px 20px;
+            text-align: center;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .app-subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .main-content {
+            padding: 20px;
+            height: calc(100% - 140px);
+            overflow-y: auto;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .account-number {
+            font-size: 14px;
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: var(--secondary);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-light);
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: var(--text);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .transaction-item.new {
+            background: rgba(34, 197, 94, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-merchant {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .transaction-time {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .transaction-amount {
+            text-align: right;
+        }
+
+        .amount-main {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .amount-charity {
+            font-size: 12px;
+            color: var(--accent);
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: flex-end;
+        }
+
+        .charity-badge {
+            background: var(--accent);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .ai-badge {
+            background: #8b5cf6;
+            color: white;
+            padding: 1px 4px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .charity-section {
+            background: linear-gradient(135deg, var(--accent), #059669);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .charity-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .charity-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .charity-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .ai-recommendation {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .ai-label {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .confidence-score {
+            margin-left: auto;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ai-text {
+            font-size: 14px;
+            line-height: 1.4;
+            opacity: 0.95;
+        }
+
+        .settings-section {
+            space-y: 16px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .setting-desc {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 28px;
+            background: #cbd5e1;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        .no-roundup {
+            color: var(--text-light);
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .update-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--success);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .update-indicator.show {
+            opacity: 1;
+        }
+
+        .refresh-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .refresh-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="phone-screen">
+            <div class="update-indicator" id="updateIndicator">Updated!</div>
+            
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>Bank</span>
+                <span>100%</span>
+            </div>
+            
+            <div class="app-header">
+                <h1 class="app-title">Bank</h1>
+                <p class="app-subtitle">Smart banking with AI charity selection</p>
+            </div>
+            
+            <div class="main-content">
+                <div class="balance-card">
+                    <div class="balance-label">Current Balance</div>
+                    <div class="balance-amount" id="balance">£2,847.93</div>
+                    <div class="account-number">Account: •••• 1234</div>
+                </div>
+                
+                <div class="nav-tabs">
+                    <div class="nav-tab active" onclick="showTab('transactions')">Transactions</div>
+                    <div class="nav-tab" onclick="showTab('charity')">GoodCents</div>
+                    <div class="nav-tab" onclick="showTab('settings')">Settings</div>
+                </div>
+                
+                <!-- Transactions Tab -->
+                <div class="tab-content active" id="transactions">
+                    <div id="transactions-list">
+                        <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                            <p>Loading transactions...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charity Tab -->
+                <div class="tab-content" id="charity">
+                    <div class="charity-section">
+                        <div class="charity-header">
+                            <div class="charity-title">GoodCents Impact</div>
+                        </div>
+                        
+                        <div class="charity-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="monthly-donated">£12.47</div>
+                                <div class="stat-label">This Month</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="total-impact">0.5</div>
+                                <div class="stat-label">Impact Units</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="charity-count">6</div>
+                                <div class="stat-label">Charities</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-recommendation">
+                            <div class="ai-header">
+                                <span class="ai-label">Selection</span>
+                                <span class="confidence-score" id="confidence">89% confidence</span>
+                            </div>
+                            <div class="ai-text" id="ai-text">
+                                Our AI analyzes your spending patterns to recommend the most relevant charities for each purchase.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settings">
+                    <div class="settings-section">
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">GoodCents Roundups</div>
+                                <div class="setting-desc">Automatically donate spare change</div>
+                            </div>
+                            <div class="toggle-switch active" data-setting="roundups_enabled" onclick="toggleSetting(this)"></div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">AI Charity Selection</div>
+                                <div class="setting-desc">Let AI choose charities based on spending</div>
+                            </div>
+                            <div class="toggle-switch active" data-setting="ai_charity_selection" onclick="toggleSetting(this)"></div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Round to Nearest £</div>
+                                <div class="setting-desc">Round up to nearest whole pound</div>
+                            </div>
+                            <div class="toggle-switch active" data-setting="round_to_pound" onclick="toggleSetting(this)"></div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Monthly Cap (£10)</div>
+                                <div class="setting-desc">Maximum £10 donations per month</div>
+                            </div>
+                            <div class="toggle-switch" data-setting="monthly_cap" onclick="toggleSetting(this)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="refresh-button" onclick="manualRefresh()" title="Refresh data">
+                🔄
+            </button>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <script>
+        var currentBalance = 2847.93;
+        var monthlyDonated = 12.47;
+        var transactions = [];
+        var charities = {};
+        var settings = {};
+        var lastTransactionCount = 0;
+        var API_BASE = window.location.origin;
+
+        function getMerchantIcon(merchant) {
+            var icons = {
+                'costa': '☕', 'coffee': '☕', 'cafe': '☕',
+                'amazon': '📚', 'waterstones': '📖', 'book': '📚', 'bookhub': '📚',
+                'tesco': '🛒', 'grocery': '🛒', 'supermarket': '🛒',
+                'uber': '🚗', 'taxi': '🚗', 'transport': '🚗',
+                'gym': '💪', 'fitness': '💪', 'puregym': '💪',
+                'boots': '💊', 'pharmacy': '💊', 'health': '💊',
+                'restaurant': '🍽️', 'food': '🍕'
+            };
+            
+            var merchantLower = merchant.toLowerCase();
+            for (var key in icons) {
+                if (merchantLower.includes(key)) {
+                    return icons[key];
+                }
+            }
+            return '💳';
+        }
+
+        function showUpdateIndicator() {
+            var indicator = document.getElementById('updateIndicator');
+            indicator.classList.add('show');
+            setTimeout(function() {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        function manualRefresh() {
+            console.log('🔄 Manual refresh triggered');
+            showNotification('Refreshing data...');
+            fetchData();
+        }
+
+        function fetchData() {
+            console.log('🔄 Fetching data from API...');
+            
+            var timestamp = Date.now();
+            
+            Promise.all([
+                fetch(API_BASE + '/api/account?t=' + timestamp),
+                fetch(API_BASE + '/api/transactions?t=' + timestamp),
+                fetch(API_BASE + '/api/charities?t=' + timestamp),
+                fetch(API_BASE + '/api/settings?t=' + timestamp)
+            ]).then(function(responses) {
+                var dataUpdated = false;
+
+                responses[0].json().then(function(accountData) {
+                    if (Math.abs(accountData.balance - currentBalance) > 0.01 || 
+                        Math.abs(accountData.monthly_donated - monthlyDonated) > 0.01) {
+                        currentBalance = accountData.balance;
+                        monthlyDonated = accountData.monthly_donated;
+                        dataUpdated = true;
+                        console.log('Balance updated to:', currentBalance);
+                    }
+                }).catch(console.error);
+
+                responses[1].json().then(function(transactionsData) {
+                    if (transactionsData.transactions.length !== transactions.length) {
+                        console.log('New transactions detected!');
+                        transactions = transactionsData.transactions;
+                        dataUpdated = true;
+                        
+                        if (transactions.length > lastTransactionCount) {
+                            console.log('Found new transaction:', transactions[0]);
+                            showNotification('New payment: ' + transactions[0].merchant + ' - £' + transactions[0].amount.toFixed(2));
+                        }
+                        lastTransactionCount = transactions.length;
+                    }
+                }).catch(console.error);
+
+                responses[2].json().then(function(charitiesData) {
+                    charities = charitiesData.charities;
+                }).catch(console.error);
+
+                responses[3].json().then(function(settingsData) {
+                    settings = settingsData.settings;
+                }).catch(console.error);
+
+                setTimeout(function() {
+                    if (dataUpdated) {
+                        console.log('Updating UI with new data');
+                        updateDisplay();
+                        renderTransactions();
+                        showUpdateIndicator();
+                    }
+                    updateSettingsUI();
+                }, 100);
+
+            }).catch(function(error) {
+                console.error('Error fetching data:', error);
+                showNotification('Failed to update data', 'error');
+            });
+        }
+
+        function updateDisplay() {
+            document.getElementById('balance').textContent = '£' + currentBalance.toFixed(2);
+            document.getElementById('monthly-donated').textContent = '£' + monthlyDonated.toFixed(2);
+            
+            var charitiesArray = Object.values(charities);
+            if (charitiesArray.length > 0) {
+                var avgCost = charitiesArray.reduce(function(sum, c) { return sum + c.costPerImpact; }, 0) / charitiesArray.length;
+                var totalImpact = monthlyDonated / avgCost;
+                document.getElementById('total-impact').textContent = totalImpact.toFixed(1);
+            }
+            
+            document.getElementById('charity-count').textContent = Object.keys(charities).length;
+        }
+
+        function renderTransactions() {
+            var container = document.getElementById('transactions-list');
+            
+            if (!transactions || transactions.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-light);"><p>No transactions yet</p><p style="font-size: 0.875rem; margin-top: 0.5rem;">Make a payment to see it appear here instantly</p></div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            for (var i = 0; i < transactions.length; i++) {
+                var transaction = transactions[i];
+                var item = document.createElement('div');
+                item.className = 'transaction-item';
+                
+                if (i === 0 && transaction.time === 'Just now') {
+                    item.classList.add('new');
+                }
+                
+                var merchantIcon = getMerchantIcon(transaction.merchant);
+                var charityInfo = transaction.charity ? charities[transaction.charity] : null;
+                
+                var charityHtml = '';
+                if (transaction.roundup > 0 && charityInfo) {
+                    charityHtml = '<div class="amount-charity">+£' + transaction.roundup.toFixed(2) + ' <span class="charity-badge">' + charityInfo.name + '</span>';
+                    if (transaction.ai_confidence) {
+                        charityHtml += '<span class="ai-badge">' + transaction.ai_confidence + '%</span>';
+                    }
+                    charityHtml += '</div>';
+                } else if (transaction.roundup === 0) {
+                    charityHtml = '<div class="no-roundup">No roundup (disabled)</div>';
+                }
+                
+                item.innerHTML = '<div class="transaction-icon">' + merchantIcon + '</div><div class="transaction-details"><div class="transaction-merchant">' + transaction.merchant + '</div><div class="transaction-time">' + transaction.time + '</div></div><div class="transaction-amount"><div class="amount-main">-£' + transaction.amount.toFixed(2) + '</div>' + charityHtml + '</div>';
+                
+                container.appendChild(item);
+            }
+
+            updateAIRecommendation();
+        }
+
+        function updateAIRecommendation() {
+            if (transactions.length > 0) {
+                var recentTransaction = transactions[0];
+                if (recentTransaction.ai_confidence) {
+                    document.getElementById('confidence').textContent = recentTransaction.ai_confidence + '% confidence';
+                }
+                if (recentTransaction.ai_reasoning) {
+                    document.getElementById('ai-text').textContent = recentTransaction.ai_reasoning;
+                }
+            }
+        }
+
+        function updateSettingsUI() {
+            for (var settingKey in settings) {
+                var toggle = document.querySelector('[data-setting="' + settingKey + '"]');
+                if (toggle) {
+                    if (settings[settingKey]) {
+                        toggle.classList.add('active');
+                    } else {
+                        toggle.classList.remove('active');
+                    }
+                }
+            }
+        }
+
+        function toggleSetting(element) {
+            var settingKey = element.dataset.setting;
+            var newValue = !element.classList.contains('active');
+            
+            fetch(API_BASE + '/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [settingKey]: newValue })
+            }).then(function(response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to update setting');
+                }
+            }).then(function(result) {
+                settings = result.settings;
+                if (newValue) {
+                    element.classList.add('active');
+                } else {
+                    element.classList.remove('active');
+                }
+                
+                var friendlyName = settingKey.replace(/_/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+                showNotification(friendlyName + ' ' + (newValue ? 'enabled' : 'disabled'));
+            }).catch(function(error) {
+                console.error('Error updating setting:', error);
+                showNotification('Failed to update setting', 'error');
+            });
+        }
+
+        function showTab(tabName) {
+            var tabs = document.querySelectorAll('.nav-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            event.target.classList.add('active');
+            
+            var contents = document.querySelectorAll('.tab-content');
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function showNotification(message, type) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            if (type === 'error') {
+                notification.style.background = 'var(--danger)';
+            } else {
+                notification.style.background = 'var(--success)';
+            }
+            
+            setTimeout(function() {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function initializeApp() {
+            console.log('Bank Mobile App Starting...');
+            
+            fetchData();
+            
+            setInterval(fetchData, 1000);
+            
+            window.addEventListener('focus', fetchData);
+            
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    fetchData();
+                }
+            });
+            
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.type === 'PAYMENT_COMPLETED') {
+                    console.log('Payment message received:', event.data);
+                    showNotification('Payment detected! Updating...');
+                    setTimeout(fetchData, 500);
+                }
+            });
+            
+            console.log('Bank Mobile App Ready! Checking for updates every second.');
+        }
+
+        window.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
