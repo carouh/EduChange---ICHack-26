@@ -2,7 +2,7 @@
 
 > Transform spare change into meaningful impact through intelligent charity roundups
 
-## 🌟 Overview
+## Overview
 
 GoodCents is an innovative banking feature that automatically rounds up everyday transactions and donates the spare change to charitable causes. Built as a hackathon proof-of-concept, this project demonstrates how modern banking apps can seamlessly integrate charitable giving into the customer experience.
 
@@ -16,9 +16,9 @@ Every time you make a purchase, the transaction amount is rounded up to the near
 
 These micro-donations accumulate throughout the month, turning everyday spending into meaningful charitable contributions without requiring any conscious effort from the user.
 
-## ✨ Key Features
+## Key Features
 
-### 🤖 AI-Powered Charity Matching
+### AI-Powered Charity Matching
 
 The system uses intelligent algorithms to recommend charities based on:
 
@@ -29,7 +29,7 @@ The system uses intelligent algorithms to recommend charities based on:
 
 **Example**: Buying educational supplies triggers recommendations for education-focused charities like Room to Read or Khan Academy, with 89% confidence matching.
 
-### 🏦 Bank-Agnostic Architecture
+### Bank-Agnostic Architecture
 
 GoodCents is designed as a **white-label feature** that can be adopted by any banking institution:
 
@@ -38,14 +38,14 @@ GoodCents is designed as a **white-label feature** that can be adopted by any ba
 - Regulatory compliance framework built-in
 - Minimal technical overhead for implementation
 
-### 📱 Seamless User Experience
+### Seamless User Experience
 
 - **Zero friction**: Roundups happen automatically on every transaction
 - **Real-time updates**: Instant reflection in mobile banking app
 - **Full transparency**: Clear breakdown of donations and impact
 - **User control**: Easy opt-in/opt-out and charity preferences
 
-## 🏗️ Project Structure
+## Project Structure
 
 This demonstration includes three integrated components:
 
@@ -77,7 +77,7 @@ A Python-based demo server providing:
 - Real-time roundup calculations
 - Demo orchestration and presentation mode
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -126,7 +126,7 @@ The system analyzes:
 
 Output: Ranked charity recommendations with confidence scores
 
-## 🌍 Real-World Applications
+## Real-World Applications
 
 ### For Consumers
 - **Painless giving**: Donate without thinking about it
@@ -146,7 +146,7 @@ Output: Ranked charity recommendations with confidence scores
 - **Competitive differentiation**: Stand out in crowded banking market
 - **New revenue streams**: Partnership opportunities with charities
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - [ ] **Charity portfolio management**: Select multiple favorite charities
 - [ ] **Donation matching**: Banks match customer roundups
